@@ -28,4 +28,9 @@ public class RandomServiceNodeSelector<T> implements ServiceNodeSelector<T> {
     public ServiceNode<T> select(List<ServiceNode<T>> serviceNodes) {
         return serviceNodes.get(ThreadLocalRandom.current().nextInt(serviceNodes.size()));
     }
+
+    @Override
+    public void ack() {
+
+    }
 }

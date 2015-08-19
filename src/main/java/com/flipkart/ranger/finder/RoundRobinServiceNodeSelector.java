@@ -35,4 +35,9 @@ public class RoundRobinServiceNodeSelector<T> implements ServiceNodeSelector<T> 
         index.set((index.get() + 1) % serviceNodes.size());
         return serviceNodes.get(index.get());
     }
+
+    @Override
+    public void ack() {
+
+    }
 }

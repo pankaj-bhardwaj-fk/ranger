@@ -16,10 +16,7 @@
 
 package com.flipkart.ranger.finder;
 
-import com.flipkart.ranger.model.ServiceNode;
-import com.flipkart.ranger.model.ServiceNodeSelector;
-import com.flipkart.ranger.model.ServiceRegistry;
-import com.flipkart.ranger.model.ShardSelector;
+import com.flipkart.ranger.model.*;
 
 import java.util.List;
 
@@ -41,6 +38,21 @@ public class ServiceFinder<T, ServiceRegistryType extends ServiceRegistry<T>> {
         }
         return nodeSelector.select(nodes);
     }
+
+    private void ack(){
+        nodeSelector.ack();
+    }
+
+    public Object execute(T criteria, Task taskExecutor){
+        try{
+            ServiceNode<T> node = get(criteria);
+            Object executeResult = taskExecutor.execute(node);
+            return executeResult;
+        } finally {
+            ack();
+        }
+    }
+
 
     public List<ServiceNode<T>> getAll(T criteria) {
         return shardSelector.nodes(criteria, serviceRegistry);
