@@ -47,7 +47,7 @@ public class ServiceFinder<T, ServiceRegistryType extends ServiceRegistry<T>> {
         try{
             ServiceNode<T> node = get(criteria);
             Object executeResult = taskExecutor.execute(node);
-            return executeResult;
+            return node;
         } finally {
             ack();
         }

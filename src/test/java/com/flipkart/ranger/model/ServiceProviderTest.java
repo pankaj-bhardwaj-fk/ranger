@@ -21,6 +21,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.ranger.ServiceFinderBuilders;
 import com.flipkart.ranger.ServiceProviderBuilders;
+import com.flipkart.ranger.finder.LeastActiveServiceLinear;
+import com.flipkart.ranger.finder.LeastActiveServiceNodeSelector;
 import com.flipkart.ranger.finder.RoundRobinServiceNodeSelector;
 import com.flipkart.ranger.finder.sharded.SimpleShardedServiceFinder;
 import com.flipkart.ranger.healthcheck.Healthcheck;
@@ -148,6 +150,109 @@ public class ServiceProviderTest {
         serviceFinder.stop();
         //while (true);
     }
+
+
+    @Test
+    public void testLeastActiveServiceLinear() throws Exception{
+        SimpleShardedServiceFinder<TestShardInfo> serviceFinder = ServiceFinderBuilders.<TestShardInfo>shardedFinderBuilder()
+                .withConnectionString(testingCluster.getConnectString())
+                .withNamespace("test")
+                .withServiceName("test-service")
+                .withNodeSelector(new LeastActiveServiceLinear<TestShardInfo>())
+                .withDeserializer(new Deserializer<TestShardInfo>() {
+                    @Override
+                    public ServiceNode<TestShardInfo> deserialize(byte[] data) {
+                        try {
+                            return objectMapper.readValue(data,
+                                    new TypeReference<ServiceNode<TestShardInfo>>() {
+                                    });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .build();
+        logger.info("PERF:: LeastActiveServiceLinear ");
+        serviceFinder.start();
+        {
+            ServiceNode<TestShardInfo> node = (ServiceNode<TestShardInfo>) serviceFinder.execute(new TestShardInfo(1), new TaskImplTest());
+            Assert.assertNotNull(node);
+            Assert.assertEquals(1, node.getNodeData().getShardId());
+            System.out.println(node.getHost());
+        }
+        {
+            ServiceNode<TestShardInfo> node = (ServiceNode<TestShardInfo>) serviceFinder.execute(new TestShardInfo(1), new TaskImplTest());
+            Assert.assertNotNull(node);
+            Assert.assertEquals(1, node.getNodeData().getShardId());
+            System.out.println(node.getHost());
+        }
+        long startTime = System.currentTimeMillis();
+        for(long i = 0; i <1000000; i++)
+        {
+            ServiceNode<TestShardInfo> node = (ServiceNode<TestShardInfo>) serviceFinder.execute(new TestShardInfo(1), new TaskImplTest());
+            Assert.assertNotNull(node);
+            Assert.assertEquals(1, node.getNodeData().getShardId());
+        }
+        logger.info("PERF::LeasatActiveSelector ::Took (ms):" + (System.currentTimeMillis() - startTime));
+        {
+            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(99));
+            Assert.assertNull(node);
+        }
+        serviceFinder.stop();
+    }
+
+
+    @Test
+    public void testLeastActiveServiceNodeSelector() throws Exception{
+        SimpleShardedServiceFinder<TestShardInfo> serviceFinder = ServiceFinderBuilders.<TestShardInfo>shardedFinderBuilder()
+                .withConnectionString(testingCluster.getConnectString())
+                .withNamespace("test")
+                .withServiceName("test-service")
+                .withNodeSelector(new LeastActiveServiceNodeSelector<TestShardInfo>())
+                .withDeserializer(new Deserializer<TestShardInfo>() {
+                    @Override
+                    public ServiceNode<TestShardInfo> deserialize(byte[] data) {
+                        try {
+                            return objectMapper.readValue(data,
+                                    new TypeReference<ServiceNode<TestShardInfo>>() {
+                                    });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .build();
+        logger.info("PERF:: LeastActiveServiceNodeSelector ");
+        serviceFinder.start();
+        {
+            ServiceNode<TestShardInfo> node = (ServiceNode<TestShardInfo>) serviceFinder.execute(new TestShardInfo(1), new TaskImplTest());
+            Assert.assertNotNull(node);
+            Assert.assertEquals(1, node.getNodeData().getShardId());
+            System.out.println(node.getHost());
+        }
+        {
+            ServiceNode<TestShardInfo> node = (ServiceNode<TestShardInfo>) serviceFinder.execute(new TestShardInfo(1), new TaskImplTest());
+            Assert.assertNotNull(node);
+            Assert.assertEquals(1, node.getNodeData().getShardId());
+            System.out.println(node.getHost());
+        }
+        long startTime = System.currentTimeMillis();
+        for(long i = 0; i <1000000; i++)
+        {
+            ServiceNode<TestShardInfo> node = (ServiceNode<TestShardInfo>) serviceFinder.execute(new TestShardInfo(1), new TaskImplTest());
+            Assert.assertNotNull(node);
+            Assert.assertEquals(1, node.getNodeData().getShardId());
+        }
+        logger.info("PERF::LeastActiveServiceNodeSelector ::Took (ms):" + (System.currentTimeMillis() - startTime));
+        {
+            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(99));
+            Assert.assertNull(node);
+        }
+        serviceFinder.stop();
+    }
+
 
     @Test
     public void testBasicDiscoveryRR() throws Exception {
