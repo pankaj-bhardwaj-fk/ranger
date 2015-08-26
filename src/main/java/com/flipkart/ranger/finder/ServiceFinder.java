@@ -31,7 +31,7 @@ public class ServiceFinder<T, ServiceRegistryType extends ServiceRegistry<T>> {
         this.nodeSelector = nodeSelector;
     }
 
-    public ServiceNode<T> get(T criteria) {
+    private ServiceNode<T> get(T criteria) {
         List<ServiceNode<T>> nodes = shardSelector.nodes(criteria, serviceRegistry);
         if(null == nodes || nodes.isEmpty()) {
             return null;
@@ -47,7 +47,7 @@ public class ServiceFinder<T, ServiceRegistryType extends ServiceRegistry<T>> {
         try{
             ServiceNode<T> node = get(criteria);
             Object executeResult = taskExecutor.execute(node);
-            return node;
+            return executeResult;
         } finally {
             ack();
         }
