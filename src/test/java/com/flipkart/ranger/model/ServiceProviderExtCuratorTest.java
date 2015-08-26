@@ -131,28 +131,28 @@ public class ServiceProviderExtCuratorTest {
                 })
                 .build();
         serviceFinder.start();
-        {
-            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(1));
-            Assert.assertNotNull(node);
-            Assert.assertEquals(1, node.getNodeData().getShardId());
-        }
-        {
-            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(1));
-            Assert.assertNotNull(node);
-            Assert.assertEquals(1, node.getNodeData().getShardId());
-        }
-        long startTime = System.currentTimeMillis();
-        for(long i = 0; i <1000000; i++)
-        {
-            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(2));
-            Assert.assertNotNull(node);
-            Assert.assertEquals(2, node.getNodeData().getShardId());
-        }
-        logger.info("PERF::RandomSelector::Took (ms):" + (System.currentTimeMillis() - startTime));
-        {
-            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(99));
-            Assert.assertNull(node);
-        }
+//        {
+//            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(1));
+//            Assert.assertNotNull(node);
+//            Assert.assertEquals(1, node.getNodeData().getShardId());
+//        }
+//        {
+//            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(1));
+//            Assert.assertNotNull(node);
+//            Assert.assertEquals(1, node.getNodeData().getShardId());
+//        }
+//        long startTime = System.currentTimeMillis();
+//        for(long i = 0; i <1000000; i++)
+//        {
+//            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(2));
+//            Assert.assertNotNull(node);
+//            Assert.assertEquals(2, node.getNodeData().getShardId());
+//        }
+//        logger.info("PERF::RandomSelector::Took (ms):" + (System.currentTimeMillis() - startTime));
+//        {
+//            ServiceNode<TestShardInfo> node = serviceFinder.get(new TestShardInfo(99));
+//            Assert.assertNull(node);
+//        }
         serviceFinder.stop();
         //while (true);
     }

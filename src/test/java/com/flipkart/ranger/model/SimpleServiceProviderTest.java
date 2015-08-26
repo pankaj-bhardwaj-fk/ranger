@@ -79,19 +79,19 @@ public class SimpleServiceProviderTest {
                 })
                 .build();
         serviceFinder.start();
-        {
-            ServiceNode node = serviceFinder.get(null);
-            Assert.assertNotNull(node);
-            System.out.println(node.getHost());
-        }
+//        {
+//            ServiceNode node = serviceFinder.get(null);
+//            Assert.assertNotNull(node);
+//            System.out.println(node.getHost());
+//        }
         Multiset<String> frequency = HashMultiset.create();
         long startTime = System.currentTimeMillis();
-        for(long i = 0; i <1000000; i++)
-        {
-            ServiceNode node = serviceFinder.get(null);
-            Assert.assertNotNull(node);
-            frequency.add(node.getHost());
-        }
+//        for(long i = 0; i <1000000; i++)
+//        {
+//            ServiceNode node = serviceFinder.get(null);
+//            Assert.assertNotNull(node);
+//            frequency.add(node.getHost());
+//        }
         System.out.println("1 Million lookups and freq counting took (ms):" + (System.currentTimeMillis() -startTime));
         System.out.println("Frequency: " + frequency);
         //while (true);
