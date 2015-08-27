@@ -31,7 +31,7 @@ public class ServiceFinder<T, ServiceRegistryType extends ServiceRegistry<T>> {
         this.nodeSelector = nodeSelector;
     }
 
-    private ServiceNode<T> get(T criteria) {
+    public ServiceNode<T> get(T criteria) {
         List<ServiceNode<T>> nodes = shardSelector.nodes(criteria, serviceRegistry);
         if(null == nodes || nodes.isEmpty()) {
             return null;
